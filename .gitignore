@@ -1,0 +1,5 @@
+.terraform
+*terraform.*
+config-terraform-eks-demo
+config-map-aws-auth.yml
+variables.tf

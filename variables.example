@@ -1,0 +1,6 @@
+variable "test_mongo" {
+    description = "dev/test DB ip"
+}
+variable "mongoDBip" {
+    description = "production DB ip"
+}
