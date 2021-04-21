@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# export PATH=$PATH:/root/bin
+export PATH=$PATH:/root/bin
 # HOME=/home/kubectl
 
 # export KUBECONFIG=$HOME/.kube/kubeconfig

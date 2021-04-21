@@ -1,14 +1,18 @@
 FROM public.ecr.aws/amazonlinux/amazonlinux:latest
 
 
-# ENV KUBECONFIG /home/kubectl/.kube/kubeconfig
-# ENV HOME /home/kubectl
+ENV KUBECONFIG /home/kubectl/.kube/kubeconfig
+ENV HOME /home/kubectl
 # ENV KUBECONFIG /root/.kube/kubeconfig
 
 ARG KUBECTL_VERSION=1.18.8/2020-09-18
 
 RUN yum install -y unzip jq && \
 	amazon-linux-extras install docker
+RUN curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator
+RUN chmod +x ./aws-iam-authenticator 
+RUN cp ./aws-iam-authenticator usr/local/bin/aws-iam-authenticator 
+RUN env && aws-iam-authenticator help
 
 # install aws-cli v2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \

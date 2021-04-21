@@ -17,8 +17,12 @@ resource "aws_codebuild_project" "uber_be_codebuild_project" {
     privileged_mode = true
     compute_type="BUILD_GENERAL1_SMALL"
     type="LINUX_CONTAINER"
-    # image=var.codebuild_image
-    image = "aws/codebuild/standard:1.0"
+    image=var.codebuild_image
+    # image = "aws/codebuild/standard:1.0"
+    environment_variable {
+      name="CLUSTER_NAME"
+      value = var.cluster-name
+    }
     environment_variable{
       name="test_mongo"
       value=var.test_mongo
@@ -26,6 +30,60 @@ resource "aws_codebuild_project" "uber_be_codebuild_project" {
     environment_variable {
       name="mongoDBip"
       value = var.mongoDBip
+    }
+    environment_variable {
+      name="AWS_ACCESS_KEY_ID"
+      value=var.AWS_ACCESS_KEY_ID
+    }
+    environment_variable {
+      name="AWS_SECRET_ACCESS_KEY"
+      value=var.AWS_SECRET_ACCESS_KEY
+    }
+    environment_variable {
+      name="configmap"
+      value=<<CONFIGMAPAWSAUTH
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: ${aws_iam_role.project-role.arn}
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+CONFIGMAPAWSAUTH
+    }
+    environment_variable {
+      name="kubeconfig"
+      value=<<e
+apiVersion: v1
+clusters:
+- cluster:
+    server: ${aws_eks_cluster.demo.endpoint}
+    certificate-authority-data: ${aws_eks_cluster.demo.certificate_authority.0.data}
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: aws
+  name: aws
+current-context: aws
+kind: Config
+preferences: {}
+users:
+- name: aws
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      command: aws-iam-authenticator
+      args:
+        - "token"
+        - "-i"
+        - "${var.cluster-name}"
+e
     }
   }
   
