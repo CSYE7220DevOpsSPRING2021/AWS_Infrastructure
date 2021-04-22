@@ -13,7 +13,7 @@
 resource "aws_eks_cluster" "demo" {
   name     = var.cluster-name
   role_arn = aws_iam_role.project-role.arn
-
+  enabled_cluster_log_types = [ "api","audit","authenticator","controllerManager","scheduler" ]
   vpc_config {
     security_group_ids = [aws_security_group.demo-cluster.id]
     #subnet_ids         = "${aws_subnet.demo.*.id}"

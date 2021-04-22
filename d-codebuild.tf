@@ -20,6 +20,14 @@ resource "aws_codebuild_project" "uber_be_codebuild_project" {
     image=var.codebuild_image
     # image = "aws/codebuild/standard:1.0"
     environment_variable {
+      name="dockerusername"
+      value = var.dockerusername
+    }
+    environment_variable {
+      name="dockerpassword"
+      value = var.dockerpassword
+    }
+    environment_variable {
       name="CLUSTER_NAME"
       value = var.cluster-name
     }
